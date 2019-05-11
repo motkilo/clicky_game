@@ -6,6 +6,15 @@ import NavBar from "./components/NavBar";
 import friends from "./friends.json";
 import "./App.css";
 
+
+function Shuffle(array) {
+
+  for (let i = array.length - 1; i > 0; i--) {
+    let j = Math.floor(Math.random() * (i + 1));
+    [array[i], array[j]] = [array[j], array[i]];
+  }
+  return array;
+};
 class App extends Component {
   // Setting this.state.friends to the friends json array
   state = {
@@ -17,8 +26,34 @@ class App extends Component {
   };
 
 
+  ShuffleCards = () => {
+    let shuffledCards = Shuffle(friends);
+    this.State({ friends: shuffledCards});
+  };
 
+  Increment = () => {
+    const score = this.state.currentScore + 1;
+    this.setState({
+      currentScore: score,
+      guess: ""
+    });
+    if (score >= this.state.highScore) {
+      this.setState({highScore: score});
+    }
+    else if (score === 12) {
+      this.setState ({guess: "WINNER!"});
+    }
+    this.ShuffleCards();
+  };
 
+  Click = id => {
+    if (this.state.clicked.indexOf(id) === -1) {
+      this.Increment();
+      this.setState({ clicked: this.state.clicked.concat(id) })
+    } else {
+      // make a reset function??
+    }
+  };
 
   // Map over this.state.friends and render a FriendCard component for each friend object
   render() {
@@ -38,10 +73,9 @@ class App extends Component {
             key={friend.id}
             name={friend.name}
             image={friend.image}
-            handleClick={this.handleClick}
-            handleIncrement={this.handleIncrement}
-            handleReset={this.handleReset}
-            handleShuffle={this.handleShuffle}
+            Increment={this.Increment}
+            ShuffleCards={this.ShuffleCards}
+            Click={this.Click}
           />
         ))}
       </Wrapper>
